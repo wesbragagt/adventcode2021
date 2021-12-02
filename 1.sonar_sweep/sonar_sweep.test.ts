@@ -1,19 +1,23 @@
-import solution from "./sonar_sweep";
+import { SonarSweeper } from "./sonar_sweep";
 
-describe("How many measurements are larger than the previous measuments", () => {
+const tester = () => {
   it("should equal to 7 measurements", () => {
-    const exampleInput = `199 (N/A - no previous measurement)
-200 (increased)
-208 (increased)
-210 (increased)
-200 (decreased)
-207 (increased)
-240 (increased)
-269 (increased)
-260 (decreased)
-263 (increased)
+    const input = `
+199
+200
+208
+210
+200
+207
+240
+269
+260
+263
 `;
-    const actual = solution(exampleInput);
-    expect(actual).toEqual(7);
+    const actual = new SonarSweeper(input);
+    expect(actual.getIncreases()).toEqual(7);
   });
+};
+describe("How many measurements are larger than the previous measuments", () => {
+  describe("OOP", tester);
 });
