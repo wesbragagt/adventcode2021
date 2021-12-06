@@ -10,8 +10,8 @@ export class Diver {
     }
   }
 
-  public getMultiplied(){
-    return this.horizontal * this.depth
+  public getMultiplied() {
+    return this.horizontal * this.depth;
   }
 
   private parseInstructions(str = "") {
@@ -42,7 +42,54 @@ export class Diver {
       },
     };
     if (type in types) {
-      types[type].call(value);
+      types[type](value);
     }
   }
 }
+
+export const diverAim = (input = "") => {
+  const parseInstructions = (instructions = "") =>
+    instructions.split("\n").map((instruction) => {
+      const [direction, value] = instruction.split(" ");
+      if (direction && value) {
+        return [direction, Number(value)];
+      }
+    }).filter(Boolean);
+
+  const pipe =
+    (...fns: any[]) =>
+    (initialValue: any) =>
+    fns.reduce((output: any, fn: any) => fn(output), initialValue);
+
+  const movement: Record<string, any> = {
+    forward: (value: number) => (state: any) => {
+      const horizontal = state.horizontal + value;
+      const depth = state.depth + (state.aim * value);
+      return { ...state, horizontal, depth };
+    },
+    up: (value: number) => (state: any) => {
+      const aim = state.aim - value;
+      return { ...state, aim };
+    },
+    down: (value: number) => (state: any) => {
+      const aim = state.aim + value;
+      return {
+        ...state,
+        aim,
+      };
+    },
+  };
+  const parsed = parseInstructions(input);
+  const movements = parsed.map((instruction) => {
+    if (instruction) {
+      const [direction, value] = instruction;
+      const output = movement[direction](value);
+      return output;
+    }
+  });
+  function getMultiplied(){
+    //@ts-ignore
+    return this.horizontal * this.depth
+  }
+  return pipe(...movements)({ horizontal: 0, depth: 0, aim: 0, getMultiplied });
+};
